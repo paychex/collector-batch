@@ -2,10 +2,35 @@
  * Contains utility methods that may be useful for
  * consumers of the patch collector.
  *
+ * ## esm
+ *
+ * ```js
+ * import { utils } from '@paychex/collector-batch';
+ * ```
+ *
+ * ## cjs
+ *
+ * ```js
+ * const { utils } = require('@paychex/collector-batch');
+ * ```
+ *
+ * ## amd
+ *
+ * ```js
+ * define(['@paychex/collector-batch'], function({ utils }) { ... });
+ * require(['@paychex/collector-batch'], function({ utils }) { ... });
+ * ```
+ *
+ * ## iife
+ *
+ * ```js
+ * const { utils } = window['@paychex/collector-batch'];
+ * ```
+ *
  * @module utils
  */
 
-import isEmpty from 'lodash/isEmpty.js';
+import { isEmpty } from 'lodash-es';
 import { compare } from 'fast-json-patch/index.mjs';
 
 function isNotEmpty(patches) {
@@ -29,14 +54,13 @@ function toPairs(item, index, arr) {
  * For example, if you set up your collector like this:
  *
  * ```js
- * import batchCollector from '@paychex/collector-batch/index.js';
- * import { toPatch } from '@paychex/collector-batch/utils.js';
+ * import { batch, utils } from '@paychex/collector-batch';
  *
  * async function send(payload) {
  *     // payload will contain JSON-Patch entries
  * }
  *
- * const collector = batchCollector(send, toPatch);
+ * const collector = batch(send, utils.toPatch);
  * ```
  *
  * And you sent the following events:

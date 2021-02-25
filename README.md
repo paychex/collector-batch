@@ -8,32 +8,63 @@ Provides a customizable batching collector for use with a [@paychex/core](https:
 npm install @paychex/collector-batch
 ```
 
-## Usage
+## Importing
 
-Construct your batchCollector by passing a `send` function and optional `coalesce` function to the factory method:
+### esm
 
 ```js
-import batchCollector from '@paychex/collector-batch/index.js';
+import { batch } from '@paychex/collector-batch';
+```
+
+### cjs
+
+```js
+const { batch } = require('@paychex/collector-batch');
+```
+
+### amd
+
+```js
+define(['@paychex/collector-batch'], function(collectors) { ... });
+define(['@paychex/collector-batch'], function({ batch }) { ... });
+```
+
+```js
+require(['@paychex/collector-batch'], function(collectors) { ... });
+require(['@paychex/collector-batch'], function({ batch }) { ... });
+```
+
+### iife (browser)
+
+```js
+const { batch } = window['@paychex/collector-batch'];
+```
+
+## Usage
+
+Construct your batch collector by passing a `send` function and optional `coalesce` function to the factory method:
+
+```js
+import { batch } from '@paychex/collector-batch';
 
 async function send(payload) {
     // logic to persist tracking entries here;
     // payload will be array of TrackingInfo instances
 }
 
-const collector = batchCollector(send);
+const collector = batch(send);
 ```
 
 ```js
 // using a custom coalesce function
 
-import batchCollector from '@paychex/collector-batch/index.js';
-import { toPatch } from '@paychex/collector-batch/utils.js';
+import { batch, utils } from '@paychex/collector-batch';
 
 async function send(payload) {
     // payload will contain JSON-Patch entries
 }
 
-const collector = batchCollector(send, toPatch);
+const collector = batch(send, utils.toPatch);
 ```
 
 When usign `toPatch`, your `send` method's payload will be an _Array_ whose first item is a complete TrackingInfo object and whose subsequent items will be Arrays of JSON-Patch items describing any differences from the previous item.
@@ -98,9 +129,8 @@ Although the above payload seems larger than just sending the TrackingInfo insta
 ```js
 // sending JSON-Patch entries to an endpoint
 
-import createTracker from '@paychex/core/tracker/index.js';
-import batchCollector from '@paychex/collector-batch/index.js';
-import { toPatch } from '@paychex/collector-batch/utils.js';
+import { trackers } from '@paychex/core';
+import { batch, utils } from '@paychex/collector-batch';
 
 import { createRequest, fetch } from '~/path/to/data/layer.js';
 
@@ -118,8 +148,8 @@ async function send(payload) {
   await fetch(createRequest(operation, null, payload));
 }
 
-const collector = batchCollector(send, toPatch);
-export const tracker = createTracker(collector);
+const collector = batch(send, utils.toPatch);
+export const tracker = trackers.create(collector);
 ```
 
 You can combine your collector with other utility methods, such as `buffer`, to provide "debounce" logic:
@@ -127,17 +157,15 @@ You can combine your collector with other utility methods, such as `buffer`, to 
 ```js
 // collect all items received within 5-second intervals
 
-import { buffer } from '@paychex/core/index.js';
-import { autoReset } from '@paychex/core/signals/index.js';
-import createTracker from '@paychex/core/tracker/index.js';
-import batchCollector from '@paychex/collector-batch/index.js';
+import { batch } from '@paychex/collector-batch';
+import { functions, signals, trackers } from '@paychex/core';
 
 async function send(payload) { ... }
 
-const signal = autoReset(false);
-const collector = buffer(batchCollector(send), [signal]);
+const signal = signals.autoReset(false);
+const collector = functions.buffer(batch(send), [signal]);
 
 setInterval(signal.set, 5000);
 
-export const tracker = createTracker(collector);
+export const tracker = trackers.create(collector);
 ```

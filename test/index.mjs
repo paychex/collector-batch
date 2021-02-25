@@ -1,8 +1,7 @@
 import expect from 'expect';
-import { spy } from '@paychex/core/test/utils.js';
+import { spy } from '@paychex/core/test/utils.mjs';
 
-import batchCollector from '../index.js';
-import { toPatch } from '../utils.js';
+import { batch, utils } from '../index.mjs';
 
 describe('patch collector', () => {
 
@@ -11,7 +10,7 @@ describe('patch collector', () => {
 
     beforeEach(() => {
         send = spy();
-        collector = batchCollector(send, toPatch);
+        collector = batch(send, utils.toPatch);
     });
 
     it('returns expected collector', () => {
@@ -19,7 +18,7 @@ describe('patch collector', () => {
     });
 
     it('throws if send not a function', () => {
-        expect(() => batchCollector(null)).toThrow();
+        expect(() => batch(null)).toThrow();
     });
 
     it('queues all entries within a frame', (done) => {
@@ -133,7 +132,7 @@ describe('patch collector', () => {
     });
 
     it('uses default coalesce function', (done) => {
-        collector = batchCollector(send);
+        collector = batch(send);
         collector({ count: 1 });
         collector({ count: 2 });
         collector({ count: 3 });
@@ -149,7 +148,7 @@ describe('patch collector', () => {
 
     it('uses provided coalesce function', (done) => {
         const coalesce = spy();
-        collector = batchCollector(send, coalesce);
+        collector = batch(send, coalesce);
         collector({ count: 1 });
         collector({ count: 2 });
         collector({ count: 3 });
