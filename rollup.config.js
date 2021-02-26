@@ -5,10 +5,12 @@ const commonjs = require('@rollup/plugin-commonjs');
 const { babel } = require("@rollup/plugin-babel");
 
 const pkg = require('./package.json');
+const external = ['lodash-es', '@paychex/core'];
 
 module.exports = [
     {
         // UMD
+        external,
         input: 'index.mjs',
         context: 'globalThis',
         plugins: [
@@ -32,13 +34,16 @@ module.exports = [
             esModule: false,
             exports: "named",
             sourcemap: true,
+            paths: {
+                'lodash-es': 'lodash'
+            }
         },
     },
     // ESM
     {
         context: 'globalThis',
         input: 'index.mjs',
-        external: ['lodash-es', '@paychex/core'],
+        external,
         plugins: [
             nodeResolve(),
             commonjs({
@@ -56,7 +61,7 @@ module.exports = [
     {
         context: 'globalThis',
         input: 'index.mjs',
-        external: ['lodash-es', '@paychex/core'],
+        external,
         plugins: [
             nodeResolve(),
             commonjs({
