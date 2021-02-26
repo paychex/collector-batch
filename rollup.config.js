@@ -38,6 +38,7 @@ module.exports = [
     {
         context: 'globalThis',
         input: 'index.mjs',
+        external: ['lodash-es', '@paychex/core'],
         plugins: [
             nodeResolve({
                 preferBuiltins: true,
