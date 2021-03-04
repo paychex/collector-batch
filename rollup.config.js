@@ -34,14 +34,20 @@ module.exports = [
             esModule: false,
             exports: "named",
             sourcemap: true,
+            globals: {
+                'lodash-es': 'lodash',
+                '@paychex/core': '@paychex/core',
+            },
             paths: {
-                'lodash-es': 'lodash'
+                'lodash-es': 'lodash',
+                '@paychex/core': '@paychex/core',
             }
         },
     },
     // ESM
     {
         context: 'globalThis',
+        treeshake: false,
         input: 'index.mjs',
         external,
         plugins: [
@@ -60,6 +66,7 @@ module.exports = [
     // CJS
     {
         context: 'globalThis',
+        treeshake: false,
         input: 'index.mjs',
         external,
         plugins: [

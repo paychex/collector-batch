@@ -32,6 +32,8 @@
 import { signals, errors } from '@paychex/core';
 import { identity, isFunction } from 'lodash-es';
 
+import '@paychex/core/types/tracker.mjs';
+
 export * as utils from './utils.mjs';
 
 /**
@@ -39,10 +41,11 @@ export * as utils from './utils.mjs';
  * that can batch TrackingInfo instances using a custom `coalesce` method.
  *
  * @function
- * @param {Function} send A method to invoke with the batch payload.
- * @param {Function} [coalesce] An optional method to invoke to convert an Array
+ * @template T
+ * @param {function(T[])} send A method to invoke with the batch payload.
+ * @param {function(TrackingInfo[]):T[]} [coalesce] An optional method to invoke to convert an Array
  * of TrackingInfo instances into a payload to pass to the `send` method.
- * @returns {Function} A collector that batches all TrackingInfo instances passed
+ * @returns {function(TrackingInfo):undefined} A collector that batches all TrackingInfo instances passed
  * to the collector within a particular stack frame.
  * @example
  * // sending JSON-Patch entries to an endpoint

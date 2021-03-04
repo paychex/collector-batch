@@ -55,7 +55,7 @@
         "fast-json-patch": "^3.0.0-1"
     },
     "peerDependencies": {
-        "@paychex/core": "^2.1.0",
+        "@paychex/core": "^2.2.3",
         "lodash-es": "^4.17.21"
     }
 }

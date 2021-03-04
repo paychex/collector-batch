@@ -116,10 +116,9 @@ function toPairs(item, index, arr) {
  * ]
  * ```
  *
- * @static
- * @function toPatch
+ * @function
  * @param {TrackingInfo[]} entries The array of TrackingInfo instances to convert.
- * @returns {JSONPatch[]} An array of entries, where the first item is an unmodified TrackingInfo
+ * @returns {Array.<{op: string, path: string, value: any}>} An array of entries, where the first item is an unmodified TrackingInfo
  * instance, and each subsequent item in the array is an Array of JSON-Patch operations.
  */
 export function toPatch(entries) {
