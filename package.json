@@ -34,6 +34,10 @@
             "email": "dbarnes1@paychex.com"
         }
     ],
+    "engines": {
+        "node": ">= 13.2.0",
+        "npm": ">= 7.0.0"
+    },
     "devDependencies": {
         "@babel/core": "^7.13.1",
         "@babel/plugin-proposal-class-properties": "^7.13.0",
@@ -55,7 +59,7 @@
         "fast-json-patch": "^3.0.0-1"
     },
     "peerDependencies": {
-        "@paychex/core": "^2.2.3",
-        "lodash-es": "^4.17.21"
+        "@paychex/core": ">= 2.2.3",
+        "lodash-es": ">= 4.17.21"
     }
 }
