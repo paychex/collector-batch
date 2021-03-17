@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/paychex/core" target="_blank" class="menu-item" id="repository" >Source Code</a></h2><h3>Modules</h3><ul><li><a href="module-index.html">index</a><ul class='methods'><li data-type='method'><a href="module-index.html#.batch">batch</a></li></ul></li><li><a href="module-utils.html">utils</a><ul class='methods'><li data-type='method'><a href="module-utils.html#.toPatch">toPatch</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme usertext">
+        <article><h1>@paychex/collector-batch</h1>
+<p>Provides a customizable batching collector for use with a <a href="https://github.com/paychex/core">@paychex/core</a> Tracker.</p>
+<h2>Installation</h2>
+<pre class="prettyprint source lang-bash"><code>npm install @paychex/collector-batch
+</code></pre>
+<h2>Importing</h2>
+<h3>esm</h3>
+<pre class="prettyprint source lang-js"><code>import { batch } from '@paychex/collector-batch';
+</code></pre>
+<h3>cjs</h3>
+<pre class="prettyprint source lang-js"><code>const { batch } = require('@paychex/collector-batch');
+</code></pre>
+<h3>amd</h3>
+<pre class="prettyprint source lang-js"><code>define(['@paychex/collector-batch'], function(collectors) { ... });
+define(['@paychex/collector-batch'], function({ batch }) { ... });
+</code></pre>
+<pre class="prettyprint source lang-js"><code>require(['@paychex/collector-batch'], function(collectors) { ... });
+require(['@paychex/collector-batch'], function({ batch }) { ... });
+</code></pre>
+<h3>iife (browser)</h3>
+<pre class="prettyprint source lang-js"><code>const { batch } = window['@paychex/collector-batch'];
+</code></pre>
+<h2>Usage</h2>
+<p>Construct your batch collector by passing a <code>send</code> function and optional <code>coalesce</code> function to the factory method:</p>
+<pre class="prettyprint source lang-js"><code>import { batch } from '@paychex/collector-batch';
+
+async function send(payload) {
+    // logic to persist tracking entries here;
+    // payload will be array of TrackingInfo instances
+}
+
+const collector = batch(send);
+</code></pre>
+<pre class="prettyprint source lang-js"><code>// using a custom coalesce function
+
+import { batch, utils } from '@paychex/collector-batch';
+
+async function send(payload) {
+    // payload will contain JSON-Patch entries
+}
+
+const collector = batch(send, utils.toPatch);
+</code></pre>
+<p>When usign <code>toPatch</code>, your <code>send</code> method's payload will be an <em>Array</em> whose first item is a complete TrackingInfo object and whose subsequent items will be Arrays of JSON-Patch items describing any differences from the previous item.</p>
+<p>For example, if you sent the following events:</p>
+<pre class="prettyprint source lang-js"><code>tracker.event('click', { category: 'ux' });
+tracker.event('click', { category: 'menu', text: 'log out' });
+</code></pre>
+<p>Then the <code>toPatch</code> payload passed to your <code>send</code> method would look like this:</p>
+<pre class="prettyprint source lang-json"><code>[
+  {
+    &quot;id&quot;: &quot;a0ed9697-1e38-4bca-b17b-5c79b9f028e2&quot;,
+    &quot;type&quot;: &quot;event&quot;,
+    &quot;label&quot;: &quot;click&quot;,
+    &quot;start&quot;: 1611604974339,
+    &quot;stop&quot;: 1611604974339,
+    &quot;duration&quot;: 0,
+    &quot;count&quot;: 1,
+    &quot;data&quot;: {
+      &quot;category&quot;: &quot;ux&quot;
+    }
+  },
+  [
+    {
+      &quot;op&quot;: &quot;replace&quot;,
+      &quot;path&quot;: &quot;/data/category&quot;,
+      &quot;value&quot;: &quot;menu&quot;
+    },
+    {
+      &quot;op&quot;: &quot;add&quot;,
+      &quot;path&quot;: &quot;/data/text&quot;,
+      &quot;value&quot;: &quot;log out&quot;
+    },
+    {
+      &quot;op&quot;: &quot;replace&quot;,
+      &quot;path&quot;: &quot;/stop&quot;,
+      &quot;value&quot;: 1611604974340
+    },
+    {
+      &quot;op&quot;: &quot;replace&quot;,
+      &quot;path&quot;: &quot;/start&quot;,
+      &quot;value&quot;: 1611604974340
+    },
+    {
+      &quot;op&quot;: &quot;replace&quot;,
+      &quot;path&quot;: &quot;/id&quot;,
+      &quot;value&quot;: &quot;b387d125-1910-45ff-a346-cd17e35c9e94&quot;
+    }
+  ]
+]
+</code></pre>
+<p>Although the above payload seems larger than just sending the TrackingInfo instances directly, if you modify your data pipeline to enable compression (e.g. using a library like <a href="https://github.com/nodeca/pako"><code>pako</code></a>), the overall size can be reduced dramatically.</p>
+<h2>Examples</h2>
+<pre class="prettyprint source lang-js"><code>// sending JSON-Patch entries to an endpoint
+
+import { trackers } from '@paychex/core';
+import { batch, utils } from '@paychex/collector-batch';
+
+import { createRequest, fetch } from '~/path/to/data/layer.js';
+
+const operation = {
+  method: 'PATCH',
+  base: 'my-endpoint',
+  path: '/analytics/tracking',
+  ignore: {
+    tracking: true,
+    traceability: true,
+  }
+};
+
+async function send(payload) {
+  await fetch(createRequest(operation, null, payload));
+}
+
+const collector = batch(send, utils.toPatch);
+export const tracker = trackers.create(collector);
+</code></pre>
+<p>You can combine your collector with other utility methods, such as <code>buffer</code>, to provide &quot;debounce&quot; logic:</p>
+<pre class="prettyprint source lang-js"><code>// collect all items received within 5-second intervals
+
+import { batch } from '@paychex/collector-batch';
+import { functions, signals, trackers } from '@paychex/core';
+
+async function send(payload) { ... }
+
+const signal = signals.autoReset(false);
+const collector = functions.buffer(batch(send), [signal]);
+
+setInterval(signal.set, 5000);
+
+export const tracker = trackers.create(collector);
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>
