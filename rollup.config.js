@@ -35,7 +35,7 @@ module.exports = [
             exports: "named",
             sourcemap: true,
             globals: {
-                'lodash-es': 'lodash',
+                'lodash-es': '_',
                 '@paychex/core': '@paychex/core',
             },
             paths: {
