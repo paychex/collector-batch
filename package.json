@@ -8,6 +8,14 @@
         "dist",
         "docs"
     ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/paychex/collector-batch.git"
+    },
+    "bugs": {
+        "url": "https://github.com/paychex/collector-batch/issues"
+    },
+    "homepage": "https://paychex.github.io/collector-batch/",
     "scripts": {
         "test": "mocha --recursive",
         "coverage": "c8 --reporter=html mocha --recursive",
