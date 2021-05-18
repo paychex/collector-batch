@@ -12,7 +12,7 @@ module.exports = [
         // UMD
         external,
         input: 'index.mjs',
-        context: 'globalThis',
+        context: 'window',
         plugins: [
             nodeResolve({
                 browser: true,
