@@ -1,3 +1,5 @@
+const path = require('path');
+
 const { nodeResolve } = require("@rollup/plugin-node-resolve");
 const { terser } = require("rollup-plugin-terser");
 const polyfills = require('rollup-plugin-node-polyfills');
@@ -6,6 +8,25 @@ const { babel } = require("@rollup/plugin-babel");
 
 const pkg = require('./package.json');
 const external = ['lodash-es', '@paychex/core'];
+
+const output = {
+    format: "umd",
+    name: pkg.name,
+    esModule: false,
+    exports: "named",
+    sourcemap: true,
+    sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+        return `${pkg.name}/${path.relative(path.resolve('.'), path.resolve(path.dirname(sourcemapPath), relativeSourcePath))}`;
+    },
+    globals: {
+        'lodash-es': '_',
+        '@paychex/core': '@paychex/core',
+    },
+    paths: {
+        'lodash-es': 'lodash',
+        '@paychex/core': '@paychex/core',
+    }
+};
 
 module.exports = [
     {
@@ -25,24 +46,15 @@ module.exports = [
                 babelHelpers: "bundled",
             }),
             polyfills(),
-            terser(),
         ],
-        output: {
+        output: [{
+            ...output,
+            plugins: [terser()],
             file: `dist/paychex.collector-batch.min.js`,
-            format: "umd",
-            name: pkg.name,
-            esModule: false,
-            exports: "named",
-            sourcemap: true,
-            globals: {
-                'lodash-es': '_',
-                '@paychex/core': '@paychex/core',
-            },
-            paths: {
-                'lodash-es': 'lodash',
-                '@paychex/core': '@paychex/core',
-            }
-        },
+        }, {
+            ...output,
+            file: `dist/paychex.collector-batch.js`,
+        }],
     },
     // ESM
     {
