@@ -46,7 +46,7 @@ export interface SendFunction<T> {
 export interface CoalesceFunction<T> {
     (items: TrackingInfo[]): T;
 }
-export * as utils from './utils.js';
+export * as utils from './utils';
 /**
  * Provides a collector for use with `@paychex/core`'s `createTracker` method
  * that can batch TrackingInfo instances using a custom `coalesce` method.
